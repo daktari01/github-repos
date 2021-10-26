@@ -40,7 +40,6 @@
     </tr>
     </thead>
     <tbody>
-    <%# unless @loading == true %>
       <% if @repos.present? && @total_count != 0 %>
         <% @repos.each do |repo| %>
           <tr>
@@ -56,20 +55,15 @@
           <td></td>
         </tr>
       <% end %>
-    <%# else %>
-<!--      <div class="text-center">-->
-<!--        <div class="spinner-border text-primary" role="status">-->
-<!--          <span class="sr-only">Loading...</span>-->
-<!--        </div>-->
-<!--      </div>-->
-    <%# end %>
     </tbody>
   </table>
 
   <div class="float-right">
-    <nav aria-label="...">
-      <%= will_paginate @repos %>
-    </nav>
+    <% if @repos.present? %>
+      <nav aria-label="...">
+        <%= will_paginate @repos, renderer: WillPaginate::ActionView::BootstrapLinkRenderer, inner_window: 0, outer_window: 0 %>
+      </nav>
+    <% end %>
   </div>
 </div>
 

@@ -9,14 +9,14 @@ class GithubResultsController < ApplicationController
       return render action: :index
     end
     repositories = get_repositories("https://api.github.com/search/repositories?q=#{repository_params[:repositories]}&per_page=100")
-    @repos = repositories['items'].paginate(page: params[:page], :per_page => 10)
-    @total_count = @repos.length
+    result = repositories['items']
+    @repos = result.paginate(page: params[:page], :per_page => 10)
+    @total_count = result.length
 
     if @total_count == 0
       flash[:alert] = 'Search returned 0 results'
       return render action: :index
     end
-
 
     render action: :index
   end
