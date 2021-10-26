@@ -1,4 +1,69 @@
-<div class="container mt-5">
-  <h1>GithubResults#index</h1>
-  <p>Find me in app/views/github_results/index.html.erb</p>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 mt-5">
+      <h1 class="mt-5">Github Repositories</h1>
+      <% if flash[:alert] %>
+        <div class="alert alert-warning"><%= flash[:alert] %></div>
+      <% end %>
+      <div class="mx-auto mt-5">
+
+      </div>
+    </div>
+  </div>
+
+  <%= form_with(url: search_path, method: 'get', local: true) do %>
+    <%= label_tag :repositories, 'Search for repositories ' %>
+    <div class="input-group">
+
+      <%= text_field_tag :repositories, nil, placeholder: 'Enter search text...', class: 'form-control' %>
+      <div class="input-group-append">
+        <%= button_tag 'Search', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+
+
+  <div class="row mt-5">
+    <h2 class="col-md-8">Search Results</h2>
+
+    <div class="col-md-4">
+      Total count: <span class="badge badge-pill badge-success"><%= @total_count ? @total_count : 0  %></span>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Repo Name</th>
+      <th>Repo Owner</th>
+      <th>Repo Description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <% if @repos.present? && @total_count != 0 %>
+        <% @repos.each do |repo| %>
+          <tr>
+            <td><%= link_to repo['name'], "https://github.com/#{repo['owner']['login']}/#{repo['name']}" %></td>
+            <td><%= link_to repo['owner']['login'], "https://github.com/#{repo['owner']['login']}" %></td>
+            <td><%= repo['description'] %></td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td></td>
+          <td><p>No repositories</p></td>
+          <td></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="float-right">
+    <% if @repos.present? %>
+      <nav aria-label="...">
+        <%= will_paginate @repos, renderer: WillPaginate::ActionView::BootstrapLinkRenderer, inner_window: 0, outer_window: 0 %>
+      </nav>
+    <% end %>
+  </div>
 </div>
+
