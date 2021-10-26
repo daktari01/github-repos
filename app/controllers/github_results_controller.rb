@@ -8,22 +8,8 @@ class GithubResultsController < ApplicationController
       flash[:alert] = 'Enter search text'
       return render action: :index
     end
-    # @total_count = 0
-    # current_page = 1
-    # @repos = []
-    # while @total_count < 1000
-    #   result = get_repositories("https://api.github.com/search/repositories?q=#{repository_params[:repositories]}&per_page=100&page=#{current_page}")
-    #   page_count = result['items'].length
-    #   @total_count += result['items'].length
-    #   @repos += result['items']
-    #   current_page += 1
-    #   break if page_count < 100
-    # end
-
-    @loading = true
     repositories = get_repositories("https://api.github.com/search/repositories?q=#{repository_params[:repositories]}&per_page=100")
-    @loading = false
-    @repos = repositories['items']
+    @repos = repositories['items'].paginate(page: params[:page], :per_page => 10)
     @total_count = @repos.length
 
     if @total_count == 0
@@ -38,7 +24,7 @@ class GithubResultsController < ApplicationController
   private
 
   def repository_params
-    params.permit(:repositories, :button)
+    params.permit(:repositories, :button, :page)
   end
 
   def get_repositories(url)
