@@ -1,27 +1,34 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-12 mt-5">
+      <h1 class="mt-5">Github Repositories</h1>
       <% if flash[:alert] %>
         <div class="alert alert-warning"><%= flash[:alert] %></div>
       <% end %>
       <div class="mx-auto mt-5">
-        <%= form_with(url: search_path, method: 'get', local: true) do %>
-          <div class="form-group">
-            <%= label_tag :repositories, 'Search for repositories ' %>
-            <%= text_field_tag :repositories, nil, placeholder: 'Enter search text...', class: 'form-control' %>
-          </div>
-            <%= button_tag 'Search', class: 'btn btn-primary' %>
-        <% end %>
+
       </div>
     </div>
   </div>
+
+  <%= form_with(url: search_path, method: 'get', local: true) do %>
+    <%= label_tag :repositories, 'Search for repositories ' %>
+    <div class="input-group">
+
+      <%= text_field_tag :repositories, nil, placeholder: 'Enter search text...', class: 'form-control' %>
+      <div class="input-group-append">
+        <%= button_tag 'Search', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
 
 
   <div class="row mt-5">
     <h2 class="col-md-8">Search Results</h2>
 
     <div class="col-md-4">
-      Total count: <span class="badge badge-pill badge-success"><%= @repositories.present? ? @repositories['total_count'] : 0  %></span></div>
+      Total count: <span class="badge badge-pill badge-success"><%= @total_count ? @total_count : 0  %></span>
+    </div>
   </div>
 
   <table class="table table-striped">
@@ -33,21 +40,47 @@
     </tr>
     </thead>
     <tbody>
-    <% if @repositories.present? && @repositories['total_count'] != 0 %>
-      <% @repositories['items'].each do |repo| %>
+    <% unless @loading == true %>
+      <% if @repos.present? && @total_count != 0 %>
+        <% @repos.each do |repo| %>
+          <tr>
+            <td><%= link_to repo['name'], "https://github.com/#{repo['owner']['login']}/#{repo['name']}" %></td>
+            <td><%= link_to repo['owner']['login'], "https://github.com/#{repo['owner']['login']}" %></td>
+            <td><%= repo['description'] %></td>
+          </tr>
+        <% end %>
+      <% else %>
         <tr>
-          <td><%= repo['name'] %></td>
-          <td><%= repo['owner']['login'] %></td>
-          <td><%= repo['description'] %></td>
+          <td></td>
+          <td><p>No repositories</p></td>
+          <td></td>
         </tr>
       <% end %>
     <% else %>
-      <tr>
-        <td></td>
-        <td><p>No repositories</p></td>
-        <td></td>
-      </tr>
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
     <% end %>
     </tbody>
   </table>
+  <div class="float-right">
+    <nav aria-label="...">
+      <ul class="pagination">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active">
+          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </div>
+
